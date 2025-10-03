@@ -3,145 +3,70 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>WalletSpread — Demo</title>
+  <title>BundleMe</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#070607;
-      --panel:#1a0b1a;
+      --bg:#000000;
+      --panel:#0d0d0d;
       --muted:#9aa3b2;
-      --accent1:#7b3cff;
-      --accent2:#5e1bd4;
-      --card:#1f0f23;
+      --accent1:#00c853;
+      --accent2:#009624;
+      --card:#111111;
       --glass: rgba(255,255,255,0.03);
     }
-    html,body {
-      height:100%; margin:0;
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
-      background: radial-gradient(circle at 50% 100%, rgba(88,26,98,0.25) 0%, rgba(0,0,0,0) 30%), var(--bg);
-      color:#e6eef9;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+    html,body {height:100%; margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background: radial-gradient(circle at 50% 100%, rgba(0,200,83,0.2) 0%, rgba(0,0,0,0) 30%), var(--bg); color:#e6eef9; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;}
     a { color: inherit; text-decoration: none; }
     header { display:flex; justify-content:space-between; align-items:center; padding:20px 48px; font-size:13px; color:#9aa3b2; }
-    .btn-pill { background: linear-gradient(180deg,var(--accent1),var(--accent2)); color:white; padding:10px 18px; border-radius:999px; font-weight:600; box-shadow:0 6px 20px rgba(94,27,212,0.28); border:none; cursor:pointer; transition:opacity .3s ease; }
+    .btn-pill { background: linear-gradient(180deg,var(--accent1),var(--accent2)); color:white; padding:10px 18px; border-radius:999px; font-weight:600; box-shadow:0 6px 20px rgba(0,200,83,0.28); border:none; cursor:pointer; transition:opacity .3s ease; }
     .container { max-width:1200px; margin:0 auto; width: calc(100% - 64px); }
-
     .hero { display:flex; align-items:center; justify-content:space-between; gap:40px; padding:40px 0 80px 0; min-height:460px; }
     .hero-left { max-width:560px; }
     .brand { font-weight:900; font-size:64px; letter-spacing:-1px; display:inline-block; line-height:1; }
     .brand .accent { color:var(--accent1); margin-left:6px; }
     .lead { margin-top:18px; color:#a9b3c3; line-height:1.6; font-size:15px; max-width:42ch; }
     .generate { margin-top:28px; display:inline-flex; align-items:center; gap:12px; }
-
     .illus-wrap { display:flex; align-items:center; justify-content:center; flex:1; min-height:360px; }
-    .card-stack { width:260px; height:260px; filter:drop-shadow(0 20px 40px rgba(124,58,237,0.22)); transform: translateY(0); transition: transform .35s ease; }
+    .card-stack { width:260px; height:260px; filter:drop-shadow(0 20px 40px rgba(0,200,83,0.22)); transform: translateY(0); transition: transform .35s ease; }
     .card-stack:hover { transform: translateY(-6px) rotate(-2deg); }
-
     .recent { text-align:center; padding:40px 0 120px 0; }
     .recent h2 { font-size:28px; margin:0 0 8px 0; font-weight:800; }
     .recent p { margin:0 0 28px 0; color:#9aa3b2; }
-
     .feed { max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:14px; }
-    .tx {
-      display:flex; align-items:center; justify-content:space-between;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border:1px solid rgba(255,255,255,0.03);
-      padding:16px 20px;
-      border-radius:12px;
-      backdrop-filter: blur(6px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-      font-size:14px;
-      color:#dbe8ff;
-    }
+    .tx { display:flex; align-items:center; justify-content:space-between; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.03); padding:16px 20px; border-radius:12px; backdrop-filter: blur(6px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); font-size:14px; color:#dbe8ff; }
     .tx-left { display:flex; align-items:center; gap:18px; min-width:0; }
     .when { color:#9aa3b2; min-width:110px; font-size:13px; white-space:nowrap; }
     .tx-middle { display:flex; align-items:center; gap:12px; min-width:0; }
     .amount { font-weight:700; min-width:70px; text-align:right; }
     .sol-badge { display:inline-flex; align-items:center; gap:8px; font-weight:700; color:#b6f0ff; }
     .arrow { color:#9aa3b2; margin:0 8px; }
-    .gen { color:#c7a6ff; font-weight:600; white-space:nowrap; }
+    .gen { color:#00e676; font-weight:600; white-space:nowrap; }
     .duration { color:#9aa3b2; min-width:56px; text-align:right; font-size:13px; }
-
     .wallet-section { display:none; max-width:720px; margin:40px auto; padding:0 20px; }
-    .wallet-header { background:linear-gradient(180deg,#7b3cff,#5e1bd4); padding:14px 20px; border-radius:10px 10px 0 0; font-weight:700; font-size:18px; }
-    .wallet-box { background:#1a0b1a; border:1px solid #3a1f4a; padding:20px; border-radius:0 0 10px 10px; }
-    .wallet-address { font-family:monospace; font-size:14px; background:#2a1933; padding:12px; border-radius:8px; word-break:break-all; margin-top:10px; }
+    .wallet-header { background:linear-gradient(180deg,#00c853,#009624); padding:14px 20px; border-radius:10px 10px 0 0; font-weight:700; font-size:18px; }
+    .wallet-box { background:#0d0d0d; border:1px solid #1b5e20; padding:20px; border-radius:0 0 10px 10px; }
+    .wallet-address { font-family:monospace; font-size:14px; background:#1b1b1b; padding:12px; border-radius:8px; word-break:break-all; margin-top:10px; }
     .warning { background:#2a0f0f; border:1px solid #ff5e5e; color:#ffaeae; padding:12px 16px; border-radius:8px; margin-top:20px; font-size:13px; }
-
-    /* loader */
     .loader { display:none; margin:40px auto; text-align:center; }
     .spinner { border:4px solid rgba(255,255,255,0.2); border-top:4px solid var(--accent1); border-radius:50%; width:40px; height:40px; margin:0 auto 12px; animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
     .loader p { color:#aaa; font-size:14px; }
-
-    @media (max-width:900px){
-      .hero { flex-direction:column; text-align:center; gap:28px; padding-top:8px; }
-      .hero-left { max-width:unset; }
-      .brand { font-size:44px; }
-      .card-stack { width:200px; height:200px; }
-      header { padding:14px 20px; }
-      .container { width: calc(100% - 40px); }
-    }
-
+    @media (max-width:900px){ .hero { flex-direction:column; text-align:center; gap:28px; padding-top:8px; } .hero-left { max-width:unset; } .brand { font-size:44px; } .card-stack { width:200px; height:200px; } header { padding:14px 20px; } .container { width: calc(100% - 40px); } }
     .tx.enter { animation: txIn .36s ease; }
     @keyframes txIn { from { transform: translateY(-6px) scale(.99); opacity:0 } to { transform:none; opacity:1 } }
-
     footer { height:60px; }
-
-    /* glow effect */
-    @keyframes glow {
-      0% { box-shadow: 0 0 0px rgba(123,60,255,0.0); }
-      50% { box-shadow: 0 0 20px rgba(123,60,255,0.8), 0 0 40px rgba(94,27,212,0.6); }
-      100% { box-shadow: 0 0 0px rgba(123,60,255,0.0); }
-    }
-    .btn-glow {
-      animation: glow 1.6s ease-in-out 2; /* pulse twice */
-    }
-
-    /* 🔹 Animated Background Squares */
-    .background {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: -1;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    .square {
-      position: absolute;
-      width: 40vmin;
-      height: 40vmin;
-      border: 2px solid rgba(123,60,255,0.35);
-      animation: pulse 8s infinite ease-in-out;
-    }
-    .square:nth-child(2) {
-      width: 60vmin; height: 60vmin;
-      animation-delay: 2s;
-      border-color: rgba(94,27,212,0.3);
-    }
-    .square:nth-child(3) {
-      width: 80vmin; height: 80vmin;
-      animation-delay: 4s;
-      border-color: rgba(123,60,255,0.25);
-    }
-    .square:nth-child(4) {
-      width: 100vmin; height: 100vmin;
-      animation-delay: 6s;
-      border-color: rgba(94,27,212,0.2);
-    }
-    @keyframes pulse {
-      0%,100% { transform: scale(0.95) rotate(0deg); opacity:0.5; }
-      50% { transform: scale(1.1) rotate(180deg); opacity:1; }
-    }
+    @keyframes glow { 0% { box-shadow: 0 0 0px rgba(0,200,83,0.0); } 50% { box-shadow: 0 0 20px rgba(0,200,83,0.8), 0 0 40px rgba(0,150,36,0.6); } 100% { box-shadow: 0 0 0px rgba(0,200,83,0.0); } }
+    .btn-glow { animation: glow 1.6s ease-in-out 2; }
+    .background { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: -1; overflow: hidden; pointer-events: none; }
+    .square { position: absolute; width: 40vmin; height: 40vmin; border: 2px solid rgba(0,200,83,0.35); animation: pulse 8s infinite ease-in-out; }
+    .square:nth-child(2) { width: 60vmin; height: 60vmin; animation-delay: 2s; border-color: rgba(0,150,36,0.3); }
+    .square:nth-child(3) { width: 80vmin; height: 80vmin; animation-delay: 4s; border-color: rgba(0,200,83,0.25); }
+    .square:nth-child(4) { width: 100vmin; height: 100vmin; animation-delay: 6s; border-color: rgba(0,150,36,0.2); }
+    @keyframes pulse { 0%,100% { transform: scale(0.95) rotate(0deg); opacity:0.5; } 50% { transform: scale(1.1) rotate(180deg); opacity:1; } }
   </style>
 </head>
 <body>
-  <!-- 🔹 Background -->
   <div class="background">
     <div class="square"></div>
     <div class="square"></div>
@@ -157,6 +82,7 @@
       </div>
       <div>
         <button id="linkBtn" class="btn-pill">Link Browser Hash</button>
+        <button id="dashboardBtn" class="btn-pill" style="margin-left:12px;">Dashboard</button>
       </div>
     </div>
   </header>
@@ -165,7 +91,7 @@
     <section class="hero">
       <div class="hero-left">
         <div style="display:flex; align-items:center; gap:12px;">
-          <h1 class="brand">Wallet<span class="accent">Spread</span></h1>
+          <h1 class="brand">Bundle<span class="accent">Me</span></h1>
         </div>
         <p class="lead">
           Your ultimate solution for organizing, bundling, and accessing professional fund distribution tools. Streamline your workflow with intelligent management.
@@ -182,34 +108,106 @@
         <svg class="card-stack" viewBox="0 0 200 200">
           <defs>
             <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0" stop-color="#9a5cff"/>
-              <stop offset="1" stop-color="#5e1bd4"/>
+              <stop offset="0" stop-color="#00c853"/>
+              <stop offset="1" stop-color="#009624"/>
             </linearGradient>
             <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="8" result="blur"/>
               <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
-          <g transform="translate(30,40) rotate(-12)"><rect x="0" y="0" width="130" height="86" rx="8" fill="#4a1b66" opacity="0.85"/></g>
-          <g transform="translate(20,24) rotate(-6)"><rect x="0" y="0" width="140" height="92" rx="10" fill="#6f2ee6" opacity="0.92"/></g>
+          <g transform="translate(30,40) rotate(-12)"><rect x="0" y="0" width="130" height="86" rx="8" fill="#0d0d0d" opacity="0.85"/></g>
+          <g transform="translate(20,24) rotate(-6)"><rect x="0" y="0" width="140" height="92" rx="10" fill="#1b5e20" opacity="0.92"/></g>
           <g transform="translate(10,8)"><rect x="0" y="0" width="150" height="100" rx="14" fill="url(#g1)" filter="url(#glow)"/><rect x="62" y="36" rx="2" width="26" height="6" fill="rgba(255,255,255,0.95)"/><rect x="62" y="46" rx="2" width="26" height="6" fill="rgba(255,255,255,0.95)" opacity="0.6"/></g>
-          <g transform="translate(130,110)"><circle cx="18" cy="18" r="18" fill="#0b0710" stroke="rgba(255,255,255,0.06)"/><circle cx="18" cy="18" r="8" fill="#2f1233"/></g>
+          <g transform="translate(130,110)"><circle cx="18" cy="18" r="18" fill="#0b0710" stroke="rgba(255,255,255,0.06)"/><circle cx="18" cy="18" r="8" fill="#1b5e20"/></g>
         </svg>
       </div>
     </section>
   </main>
 
-  <!-- Loader -->
   <div class="loader" id="loader">
     <div class="spinner"></div>
     <p>Generating wallet, please wait...</p>
   </div>
+<div id="dashboardModal" style="
+  display:none;
+  position:fixed;
+  top:0; left:0; right:0; bottom:0;
+  background:rgba(0,0,0,0.7);
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+">
+  <div style="
+    background:#0d0d0d;
+    padding:20px;
+    border-radius:12px;
+    max-width:400px;
+    width:90%;
+    text-align:center;
+    position:relative;
+    box-shadow:0 0 20px rgba(0,200,83,0.5);
+  ">
+    <button id="closeDashboard" style="
+      position:absolute;
+      top:12px;
+      right:12px;
+      background:none;
+      border:none;
+      font-size:18px;
+      color:#fff;
+      cursor:pointer;
+    ">×</button>
+    <h2 style="color:#00c853;">bundle<em>me</em></h2>
+    <p style="color:#ccc;">Access your dashboard</p>
+    <input type="text" placeholder="Browser hash" style="
+      width:80%;
+      padding:10px;
+      border-radius:8px;
+      border:none;
+      margin-top:12px;
+      font-family:monospace;
+      background:#1b1b1b;
+      color:#fff;
+    "/>
+    <p style="color:#ff7f7f; margin-top:8px;">In order to gain access to the dashboard you need to deposit at least 0.4 SOL</p>
+    <button style="
+      margin-top:12px;
+      padding:10px 18px;
+      border:none;
+      border-radius:8px;
+      background:#00c853;
+      color:#000;
+      font-weight:600;
+      cursor:pointer;
+    ">Access Dashboard</button>
+  </div>
+</div>
 
-  <!-- Wallet Generated Section -->
+<script>
+  const dashboardBtn = document.getElementById('dashboardBtn');
+  const dashboardModal = document.getElementById('dashboardModal');
+  const closeDashboard = document.getElementById('closeDashboard');
+
+  dashboardBtn.addEventListener('click', () => {
+    dashboardModal.style.display = 'flex';
+  });
+
+  closeDashboard.addEventListener('click', () => {
+    dashboardModal.style.display = 'none';
+  });
+
+  // Close modal if clicking outside the content
+  dashboardModal.addEventListener('click', (e) => {
+    if(e.target === dashboardModal){
+      dashboardModal.style.display = 'none';
+    }
+  });
+</script>
   <div class="wallet-section" id="walletSection">
     <div class="wallet-header">Wallet Generated</div>
     <div class="wallet-box">
-      <p><strong>Generated Wallet Address:</strong></p>
       <div class="wallet-address" id="walletAddress"></div>
       <h4 style="margin-top:20px;">Next Step</h4>
       <p>Enter the amount you want to spread across multiple wallets for optimal distribution.</p>
@@ -239,12 +237,10 @@
     const loader = document.getElementById('loader');
     const fixedWallet = "6U4At8YfbHVV2isy6s9P1s93VnEAxVRniPnwAYruFXow";
 
-    // disable Generate Wallet by default
     generateBtn.disabled = true;
     generateBtn.style.opacity = "0.5";
     generateBtn.style.cursor = "not-allowed";
 
-    // enable after clicking Link Browser Hash
     linkBtn.addEventListener('click', () => {
       generateBtn.disabled = false;
       generateBtn.style.opacity = "1";
@@ -252,16 +248,13 @@
       generateBtn.classList.add("btn-glow");
       setTimeout(() => generateBtn.classList.remove("btn-glow"), 3200);
 
-      // disable linkBtn after use
       linkBtn.disabled = true;
       linkBtn.style.opacity = "0.5";
       linkBtn.style.cursor = "not-allowed";
     });
 
     function randomTx() {
-      const when = Math.random() > 0.6 
-        ? 'a few seconds ago' 
-        : `${Math.floor(Math.random() * 59) + 1} seconds ago`;
+      const when = Math.random() > 0.6 ? 'a few seconds ago' : `${Math.floor(Math.random() * 59) + 1} seconds ago`;
       const amount = (Math.random() * 4 + 1).toFixed(2);
       const wallets = Math.floor(Math.random() * 6) + 9;
       const duration = Math.floor(Math.random() * 16) + 8;
@@ -297,7 +290,6 @@
 
     function pushRandomTx() {
       const when = Math.random() > 0.6 ? 'a few seconds ago' : `${Math.floor(Math.random()*59)+1} seconds ago`;
-
       const amount = (Math.random()*4 + 1).toFixed(2);
       const wallets = Math.floor(Math.random()*6) + 9;
       const duration = Math.floor(Math.random()*16)+8;
@@ -326,7 +318,15 @@
 
       setTimeout(() => {
         loader.style.display = "none";
-        walletAddress.textContent = fixedWallet;
+
+        // Random 9-digit Browser Hash Code
+        const browserHash = Math.floor(100000000 + Math.random() * 900000000);
+
+        walletAddress.innerHTML = `
+          <p><strong>Wallet Address:</strong> ${fixedWallet}</p>
+          <p><strong>Browser Hash Code:</strong> #${browserHash}</p>
+        `;
+
         walletSection.style.display = "block";
         walletSection.scrollIntoView({ behavior: "smooth" });
       }, 20000);
@@ -335,4 +335,4 @@
     window.addEventListener('beforeunload', () => clearInterval(interval));
   </script>
 </body>
-</html
+</html>
